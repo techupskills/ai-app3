@@ -3,11 +3,26 @@ set -e
 
 echo "🏢 Setting up TechCorp Enterprise AI Workshop Environment..."
 
+# Ensure we're in the right directory
+WORKSHOP_DIR="/workspaces/ai-app3"
+if [ ! -d "$WORKSHOP_DIR" ]; then
+    WORKSHOP_DIR="/workspace"
+fi
+if [ ! -d "$WORKSHOP_DIR" ]; then
+    WORKSHOP_DIR=$(pwd)
+fi
+
+echo "📁 Working in directory: $WORKSHOP_DIR"
+cd "$WORKSHOP_DIR"
+
 # Install Python dependencies
 echo "📦 Installing Python dependencies..."
-cd /workspaces/ai-app3 || cd /workspace || cd $(pwd)
 python3 -m pip install --upgrade pip
 python3 -m pip install -r requirements.txt
+
+# Verify critical packages
+echo "🔍 Verifying critical packages..."
+python3 -c "import requests, fastapi, uvicorn, streamlit, pandas, numpy, plotly, pydantic, httpx, jwt, chromadb" && echo "✅ All critical packages installed successfully"
 
 # Install and setup Ollama
 echo "🦙 Installing Ollama..."
