@@ -12,7 +12,7 @@
       "enableNonRootDocker": "true"
     }
   },
-  "postCreateCommand": "bash .devcontainer/setup.sh",
+  "postCreateCommand": "bash setup_python_env.sh",
   "customizations": {
     "vscode": {
       "extensions": [
