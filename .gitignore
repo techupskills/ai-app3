@@ -537,7 +537,7 @@ api_docs/
 !requirements.txt
 
 !slides/
-lab*/
+!lab*/
 !extra/
 !knowledge_base/
 !docker-compose.yml

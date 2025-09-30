@@ -1,0 +1,29 @@
+# Lab 8: Prometheus Configuration
+# TODO: Configure Prometheus monitoring for TechCorp AI services
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+# TODO: Add alerting configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # TODO: Add alertmanager target
+
+# TODO: Add rule files
+rule_files:
+  # TODO: Add alerting rules
+
+# TODO: Add scrape configurations for AI services
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+  
+  # TODO: Add TechCorp AI service scraping
+  - job_name: 'techcorp-ai'
+    static_configs:
+      - targets:
+        # TODO: Add AI service targets
