@@ -1,0 +1,20 @@
+# Lab 6: Simple Docker Container - Package your AI service
+
+# TODO: Choose a base Python image
+FROM 
+
+# TODO: Set the working directory inside the container
+WORKDIR 
+
+# TODO: Copy requirements file and install dependencies
+COPY 
+RUN 
+
+# TODO: Copy your application code
+COPY 
+
+# TODO: Expose the port your service uses
+EXPOSE 
+
+# TODO: Define the command to run your application
+CMD
