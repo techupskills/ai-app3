@@ -5,7 +5,9 @@ echo "🏢 Setting up TechCorp Enterprise AI Workshop Environment..."
 
 # Install Python dependencies
 echo "📦 Installing Python dependencies..."
-pip install -r requirements.txt
+cd /workspaces/ai-app3 || cd /workspace || cd $(pwd)
+python3 -m pip install --upgrade pip
+python3 -m pip install -r requirements.txt
 
 # Install and setup Ollama
 echo "🦙 Installing Ollama..."
