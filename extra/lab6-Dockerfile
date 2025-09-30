@@ -1,0 +1,199 @@
+# Lab 6: Production Dockerfile for TechCorp Customer Service AI
+# Multi-stage build with enterprise security and optimization
+
+# Build stage - Install dependencies and prepare application
+FROM python:3.11-slim as builder
+
+# Set build arguments for flexibility
+ARG APP_VERSION=1.0.0
+ARG BUILD_DATE
+ARG VCS_REF
+
+# Set build environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PIP_NO_CACHE_DIR=1
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1
+
+# Create build user (security best practice)
+RUN groupadd -r builduser && useradd -r -g builduser builduser
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set work directory
+WORKDIR /build
+
+# Copy requirements first for better caching
+COPY requirements.txt .
+
+# Create virtual environment and install dependencies
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Upgrade pip and install dependencies
+RUN pip install --upgrade pip setuptools wheel
+RUN pip install -r requirements.txt
+
+# Copy application code
+COPY . .
+
+# Download and cache language models
+RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')"
+
+# Production stage - Minimal runtime image
+FROM python:3.11-slim as production
+
+# Set metadata labels for enterprise container management
+LABEL maintainer="TechCorp DevOps <devops@techcorp.com>"
+LABEL version="${APP_VERSION}"
+LABEL description="TechCorp Customer Service AI Application"
+LABEL build-date="${BUILD_DATE}"
+LABEL vcs-ref="${VCS_REF}"
+LABEL org.opencontainers.image.title="TechCorp Customer Service AI"
+LABEL org.opencontainers.image.description="Enterprise customer service AI application with Streamlit dashboard"
+LABEL org.opencontainers.image.version="${APP_VERSION}"
+LABEL org.opencontainers.image.created="${BUILD_DATE}"
+LABEL org.opencontainers.image.revision="${VCS_REF}"
+LABEL org.opencontainers.image.vendor="TechCorp"
+
+# Set runtime environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV APP_ENV=production
+ENV LOG_LEVEL=INFO
+
+# Install runtime system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    dumb-init \
+    tini \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create application user and group (security best practice)
+RUN groupadd -r -g 1001 appuser && \
+    useradd -r -u 1001 -g appuser -m -d /home/appuser -s /bin/bash appuser
+
+# Copy virtual environment from builder stage
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Set work directory and create necessary directories
+WORKDIR /app
+RUN mkdir -p /app/logs /app/data /app/temp /app/metrics && \
+    chown -R appuser:appuser /app
+
+# Copy application code and set ownership
+COPY --chown=appuser:appuser . /app/
+
+# Create startup script for enterprise initialization
+RUN cat > /app/startup.sh << 'EOF'
+#!/bin/bash
+set -e
+
+# Enterprise startup script for TechCorp Customer Service AI
+
+echo "=== TechCorp Customer Service AI - Production Startup ==="
+echo "Version: ${APP_VERSION:-1.0.0}"
+echo "Environment: ${APP_ENV:-production}"
+echo "Startup time: $(date)"
+
+# Create required directories
+mkdir -p logs data temp metrics traces
+
+# Set proper permissions
+chmod 755 logs data temp metrics traces
+
+# Initialize logging configuration
+if [ ! -f logs/app.log ]; then
+    touch logs/app.log
+    echo "$(date): Application startup initiated" >> logs/app.log
+fi
+
+# Health check endpoint setup
+echo "Setting up health check endpoint..."
+
+# Wait for dependencies (if any)
+if [ ! -z "$DATABASE_URL" ]; then
+    echo "Waiting for database connection..."
+    # Add database wait logic here
+fi
+
+# Start the application based on mode
+case "${APP_MODE:-dashboard}" in
+    "dashboard")
+        echo "Starting Streamlit dashboard..."
+        exec streamlit run techcorp_dashboard.py \
+            --server.port=${PORT:-8501} \
+            --server.address=0.0.0.0 \
+            --server.headless=true \
+            --browser.serverAddress=0.0.0.0 \
+            --browser.gatherUsageStats=false \
+            --theme.base=light
+        ;;
+    "mcp-server")
+        echo "Starting MCP server..."
+        exec python mcp_customer_service_server.py
+        ;;
+    "rag-service")
+        echo "Starting RAG service..."
+        exec python enterprise_rag_service.py --mode=search
+        ;;
+    *)
+        echo "Unknown APP_MODE: ${APP_MODE}"
+        echo "Available modes: dashboard, mcp-server, rag-service"
+        exit 1
+        ;;
+esac
+EOF
+
+# Make startup script executable
+RUN chmod +x /app/startup.sh
+
+# Create health check script
+RUN cat > /app/healthcheck.sh << 'EOF'
+#!/bin/bash
+set -e
+
+# Health check script for enterprise monitoring
+HEALTH_ENDPOINT="http://localhost:${PORT:-8501}/health"
+TIMEOUT=10
+
+# Check if main service is responding
+if curl -f -s --max-time $TIMEOUT $HEALTH_ENDPOINT > /dev/null 2>&1; then
+    echo "Health check passed"
+    exit 0
+else
+    echo "Health check failed"
+    exit 1
+fi
+EOF
+
+RUN chmod +x /app/healthcheck.sh
+
+# Configure health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+    CMD /app/healthcheck.sh
+
+# Switch to non-root user
+USER appuser
+
+# Expose ports
+EXPOSE 8501 8000 8080
+
+# Set resource limits via environment variables
+ENV MEMORY_LIMIT=512M
+ENV CPU_LIMIT=1.0
+
+# Use tini as init system for proper signal handling
+ENTRYPOINT ["/usr/bin/tini", "--"]
+
+# Default command
+CMD ["/app/startup.sh"]
+
+# Build-time smoke test
+RUN python -c "import streamlit; import pandas; import plotly; import sentence_transformers; print('All dependencies loaded successfully')"

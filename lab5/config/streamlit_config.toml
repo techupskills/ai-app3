@@ -1,0 +1,55 @@
+# TechCorp Streamlit Configuration for Production
+
+[global]
+# Production settings
+developmentMode = false
+logLevel = "info"
+unitTest = false
+
+[server]
+# Server configuration
+port = 8501
+baseUrlPath = ""
+enableCORS = false
+enableXsrfProtection = true
+enableWebsocketCompression = true
+
+# Performance settings
+maxUploadSize = 200
+maxMessageSize = 200
+runOnSave = false
+
+# Security headers
+[server.headers]
+X-Frame-Options = "DENY"
+X-Content-Type-Options = "nosniff"
+X-XSS-Protection = "1; mode=block"
+Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+
+[client]
+# Client optimization
+caching = true
+displayEnabled = true
+showErrorDetails = false
+
+# Performance monitoring
+[telemetry]
+gatherUsageStats = false
+
+[theme]
+# TechCorp branding
+primaryColor = "#1f77b4"
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#f0f2f6"
+textColor = "#262730"
+font = "sans serif"
+
+[browser]
+gatherUsageStats = false
+serverAddress = "localhost"
+serverPort = 8501
+
+# Session configuration
+[session]
+maxRunTime = 3600  # 1 hour
+keepAlive = 30     # 30 seconds

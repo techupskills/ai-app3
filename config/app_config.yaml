@@ -1,0 +1,41 @@
+# TechCorp Customer Support AI - Enterprise Configuration
+
+# LLM Service Configuration
+llm:
+  model: "llama3.2:3b"
+  base_url: "http://localhost:11434"
+  timeout: 30
+  max_retries: 3
+  rate_limit_per_minute: 60
+  
+# Circuit Breaker Settings
+circuit_breaker:
+  failure_threshold: 5
+  recovery_timeout: 60
+  expected_exception_types: ["RequestException", "Timeout"]
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(correlation_id)s - %(message)s"
+  file_path: "logs/app.log"
+  max_file_size: "10MB"
+  backup_count: 5
+
+# Security Settings
+security:
+  input_max_length: 10000
+  allowed_content_types: ["text/plain"]
+  rate_limiting_enabled: true
+  
+# Business Settings
+business:
+  cost_per_1k_tokens: 0.002
+  daily_budget_limit: 100.0
+  usage_tracking_enabled: true
+  
+# Monitoring
+monitoring:
+  metrics_enabled: true
+  health_check_interval: 30
+  performance_tracking: true

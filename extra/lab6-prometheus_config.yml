@@ -1,0 +1,183 @@
+# Lab 6: Prometheus Configuration for TechCorp Customer Service AI
+# Enterprise monitoring configuration with comprehensive metrics collection
+
+global:
+  # How frequently to scrape targets by default
+  scrape_interval: 15s
+  # How long to wait before timing out a scrape
+  scrape_timeout: 10s
+  # How frequently to evaluate rules
+  evaluation_interval: 15s
+  # External labels to add to all metrics and alerts
+  external_labels:
+    environment: 'production'
+    datacenter: 'us-east-1'
+    service: 'techcorp-customer-service-ai'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+
+# Rule files specifying different alerting and recording rules
+rule_files:
+  - "alert_rules.yml"
+  - "recording_rules.yml"
+
+# A list of scrape configurations
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+    scrape_interval: 5s
+    metrics_path: /metrics
+
+  # TechCorp Customer Service AI Application
+  - job_name: 'techcorp-ai-app'
+    static_configs:
+      - targets: ['localhost:8501']
+    scrape_interval: 15s
+    metrics_path: /metrics
+    scrape_timeout: 10s
+    honor_labels: true
+    # Custom labels for service identification
+    labels:
+      service: 'customer-service-ai'
+      component: 'main-app'
+      team: 'ai-engineering'
+    # Metric relabeling
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: 'techcorp_(.*)'
+        target_label: __name__
+        replacement: 'app_${1}'
+
+  # MCP Server monitoring
+  - job_name: 'techcorp-mcp-server'
+    static_configs:
+      - targets: ['localhost:8000']
+    scrape_interval: 15s
+    metrics_path: /metrics
+    labels:
+      service: 'customer-service-ai'
+      component: 'mcp-server'
+      team: 'ai-engineering'
+
+  # RAG Service monitoring
+  - job_name: 'techcorp-rag-service'
+    static_configs:
+      - targets: ['localhost:8002']
+    scrape_interval: 30s
+    metrics_path: /metrics
+    labels:
+      service: 'customer-service-ai'
+      component: 'rag-service'
+      team: 'ai-engineering'
+
+  # Node Exporter for system metrics
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['localhost:9100']
+    scrape_interval: 15s
+    labels:
+      service: 'system'
+      component: 'node-exporter'
+
+  # cAdvisor for container metrics (if using Docker)
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['localhost:8080']
+    scrape_interval: 15s
+    labels:
+      service: 'containers'
+      component: 'cadvisor'
+
+  # Custom application metrics from file
+  - job_name: 'techcorp-file-metrics'
+    file_sd_configs:
+      - files:
+          - '/app/metrics/app_metrics.json'
+        refresh_interval: 30s
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: localhost:8501
+
+  # Database monitoring (if using external database)
+  - job_name: 'postgres-exporter'
+    static_configs:
+      - targets: ['localhost:9187']
+    scrape_interval: 30s
+    labels:
+      service: 'database'
+      component: 'postgres'
+    # Only scrape if database is configured
+    honor_labels: true
+
+  # Redis monitoring (if using Redis)
+  - job_name: 'redis-exporter'
+    static_configs:
+      - targets: ['localhost:9121']
+    scrape_interval: 30s
+    labels:
+      service: 'cache'
+      component: 'redis'
+
+  # Load balancer monitoring (if applicable)
+  - job_name: 'nginx-exporter'
+    static_configs:
+      - targets: ['localhost:9113']
+    scrape_interval: 15s
+    labels:
+      service: 'load-balancer'
+      component: 'nginx'
+
+# Remote write configuration for long-term storage
+remote_write:
+  # Example: Write to Grafana Cloud or other remote storage
+  # - url: "https://prometheus-us-central1.grafana.net/api/prom/push"
+  #   basic_auth:
+  #     username: "your-username"
+  #     password: "your-api-key"
+  #   write_relabel_configs:
+  #     - source_labels: [__name__]
+  #       regex: 'app_(.*)'
+  #       action: keep
+
+# Storage configuration
+storage:
+  # TSDB configuration
+  tsdb:
+    # Data retention time
+    retention.time: 30d
+    # Maximum data size
+    retention.size: 10GB
+    # Compression
+    wal-compression: true
+
+# Server configuration
+web:
+  # Web server configuration
+  listen-address: ":9090"
+  # Path prefix for Prometheus
+  external-url: "http://localhost:9090/"
+  # Enable lifecycle API
+  enable-lifecycle: true
+  # Enable admin API
+  enable-admin-api: false
+  # Console templates and libraries
+  console.templates: "consoles"
+  console.libraries: "console_libraries"
+
+# Tracing configuration (optional)
+tracing:
+  # Jaeger endpoint
+  endpoint: "http://jaeger:14268/api/traces"
+  # Sampling ratio
+  sampling_fraction: 0.1

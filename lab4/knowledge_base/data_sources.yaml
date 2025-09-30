@@ -1,0 +1,70 @@
+# TechCorp Enterprise Knowledge Base Configuration
+
+data_sources:
+  - name: "company_policies"
+    type: "markdown"
+    path: "../data/enterprise_docs/company_policies.md"
+    classification: "internal"
+    access_roles: ["customer_service", "supervisor", "admin"]
+    update_frequency: "monthly"
+    version_control: true
+    metadata:
+      department: "legal"
+      last_review: "2024-01-15"
+      next_review: "2024-04-15"
+      
+  - name: "technical_documentation" 
+    type: "markdown"
+    path: "../data/enterprise_docs/technical_documentation.md"
+    classification: "public"
+    access_roles: ["customer_service", "technical_support", "developer", "admin"]
+    update_frequency: "weekly"
+    version_control: true
+    metadata:
+      department: "engineering"
+      last_review: "2024-01-10"
+      next_review: "2024-02-10"
+      
+  - name: "faq"
+    type: "markdown"
+    path: "../data/enterprise_docs/faq.md"
+    classification: "public"
+    access_roles: ["customer_service", "supervisor", "admin"]
+    update_frequency: "bi-weekly"
+    version_control: true
+    metadata:
+      department: "customer_success"
+      last_review: "2024-01-20"
+      next_review: "2024-03-20"
+
+processing_config:
+  chunk_size: 500
+  chunk_overlap: 50
+  embedding_model: "sentence-transformers/all-MiniLM-L6-v2"
+  vector_db: "chromadb"
+  
+indexing_strategy:
+  semantic_search: true
+  keyword_search: true
+  hybrid_ranking: true
+  citation_tracking: true
+  
+performance_settings:
+  max_results: 10
+  relevance_threshold: 0.7
+  cache_ttl: 3600  # 1 hour
+  
+security:
+  encryption_at_rest: true
+  access_logging: true
+  data_masking: false
+  retention_days: 2555  # 7 years
+
+monitoring:
+  query_analytics: true
+  performance_metrics: true
+  usage_tracking: true
+  alert_thresholds:
+    response_time_ms: 200
+    error_rate_percent: 1
+    cache_hit_rate_percent: 80
