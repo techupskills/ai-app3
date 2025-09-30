@@ -1,29 +1,31 @@
 #!/bin/bash
+set -e
 
-# Update system
-sudo apt-get update
-
-# Install required system packages
-sudo apt-get install -y curl wget jq git
+echo "🏢 Setting up TechCorp Enterprise AI Workshop Environment..."
 
 # Install Python dependencies
-pip install --upgrade pip
+echo "📦 Installing Python dependencies..."
 pip install -r requirements.txt
 
-# Install Ollama
+# Install and setup Ollama
+echo "🦙 Installing Ollama..."
 curl -fsSL https://ollama.ai/install.sh | sh
 
 # Start Ollama service in background
-sudo systemctl start ollama || true
-
-# Wait for Ollama to be ready
-echo "Waiting for Ollama to start..."
+echo "🚀 Starting Ollama service..."
+ollama serve &
 sleep 10
 
-# Pull Llama 3.2 model (3B version for faster performance in codespace)
-ollama pull llama3.2:3b
+# Pull required models
+echo "📥 Downloading Llama 3.2 model..."
+ollama pull llama3.2
 
-# Install Node.js dependencies for MCP
-npm install -g @modelcontextprotocol/inspector
+# Create necessary directories
+echo "📁 Creating project directories..."
+mkdir -p logs data lab7 lab8
 
-echo "Setup complete! All tools and models are ready."
+# Set permissions
+chmod +x scripts/verify_environment.sh
+
+echo "✅ TechCorp Enterprise AI Workshop setup complete!"
+echo "🎯 Ready to start Lab 1"

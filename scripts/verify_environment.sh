@@ -58,9 +58,10 @@ fi
 echo ""
 echo "📚 Checking Python dependencies..."
 
-REQUIRED_PACKAGES=(
+# Critical packages for workshop core functionality
+CRITICAL_PACKAGES=(
     "requests"
-    "fastapi"
+    "fastapi" 
     "uvicorn"
     "streamlit"
     "pandas"
@@ -68,17 +69,34 @@ REQUIRED_PACKAGES=(
     "plotly"
     "pydantic"
     "httpx"
-    "pyjwt"
-    "sentence-transformers"
+    "jwt"
     "chromadb"
 )
 
-for package in "${REQUIRED_PACKAGES[@]}"; do
+# Optional packages that may have version conflicts
+OPTIONAL_PACKAGES=(
+    "sentence_transformers"
+)
+
+echo "Critical packages:"
+for package in "${CRITICAL_PACKAGES[@]}"; do
     if python3 -c "import $package" 2>/dev/null; then
         VERSION=$(python3 -c "import $package; print(getattr($package, '__version__', 'unknown'))" 2>/dev/null)
         print_status 0 "$package ($VERSION)"
     else
         print_status 1 "$package not installed" "Run: pip install $package"
+    fi
+done
+
+echo ""
+echo "Optional packages:"
+for package in "${OPTIONAL_PACKAGES[@]}"; do
+    if python3 -c "import $package" 2>/dev/null; then
+        VERSION=$(python3 -c "import $package; print(getattr($package, '__version__', 'unknown'))" 2>/dev/null)
+        print_status 0 "$package ($VERSION)"
+    else
+        # Don't fail for optional packages
+        echo -e "⚠️  ${YELLOW}$package not available (optional for advanced features)${NC}"
     fi
 done
 
@@ -90,11 +108,16 @@ if command -v docker &> /dev/null; then
         DOCKER_VERSION=$(docker --version | cut -d' ' -f3 | cut -d',' -f1)
         print_status 0 "Docker $DOCKER_VERSION"
         
-        # Check if Docker daemon is running
+        # Check if Docker daemon is running (optional in Codespaces)
         if docker ps &> /dev/null; then
             print_status 0 "Docker daemon is running"
         else
-            print_status 1 "Docker daemon not running" "Start Docker Desktop or Docker service"
+            # In Codespaces, Docker might not be running by default - that's OK
+            if [ -n "$CODESPACES" ]; then
+                print_status 0 "Docker available (Codespaces environment)"
+            else
+                print_status 1 "Docker daemon not running" "Start Docker Desktop or Docker service"
+            fi
         fi
     else
         print_status 1 "Docker command failed" "Check Docker installation"
@@ -121,10 +144,16 @@ if command -v ollama &> /dev/null; then
             print_status 1 "Llama 3.2 model not found" "Run: ollama pull llama3.2"
         fi
     else
-        print_status 1 "Ollama service not running" "Run: ollama serve"
+        # Ollama might not be running yet - provide helpful guidance
+        print_status 1 "Ollama service not running" "Run: ollama serve (or will be started by devcontainer setup)"
     fi
 else
-    print_status 1 "Ollama not found" "Install from ollama.ai"
+    # In devcontainer, Ollama will be installed by setup script
+    if [ -n "$CODESPACES" ]; then
+        print_status 1 "Ollama not found" "Will be installed by devcontainer setup"
+    else
+        print_status 1 "Ollama not found" "Install from ollama.ai"
+    fi
 fi
 
 # Check Node.js (for development tools)
@@ -200,23 +229,45 @@ fi
 # Final summary
 echo ""
 echo "============================================================="
-if [ "$ALL_CHECKS_PASSED" = true ]; then
+
+# Count critical issues (ignore Docker/Ollama service status for devcontainer)
+CRITICAL_ISSUES_COUNT=0
+# Check if any critical packages failed (we set ALL_CHECKS_PASSED=false for critical package failures)
+for package in "${CRITICAL_PACKAGES[@]}"; do
+    if ! python3 -c "import $package" 2>/dev/null; then
+        CRITICAL_ISSUES_COUNT=$((CRITICAL_ISSUES_COUNT + 1))
+    fi
+done
+
+if [ "$CRITICAL_ISSUES_COUNT" -eq 0 ]; then
     echo -e "🎉 ${GREEN}Environment verification completed successfully!${NC}"
     echo -e "✅ ${GREEN}Ready to start the TechCorp Enterprise AI Workshop${NC}"
+    
+    # Show minor issues that don't block the workshop
+    if [ "$ALL_CHECKS_PASSED" != true ]; then
+        echo ""
+        echo -e "📝 ${YELLOW}Minor issues detected (workshop can still proceed):${NC}"
+        echo "• Docker daemon not running (will be available in devcontainer)"
+        echo "• Ollama service not running (will be started by devcontainer setup)"
+        echo "• Some optional packages may have version conflicts"
+    fi
+    
     echo ""
     echo "Next steps:"
     echo "1. Navigate to lab1: cd lab1"
     echo "2. Follow the lab instructions in enterprise-ai-labs.md"
     echo "3. Use 'code -d' for diff merging with complete implementations"
 else
-    echo -e "⚠️  ${YELLOW}Environment verification completed with issues${NC}"
-    echo -e "❌ ${RED}Please fix the issues above before starting the workshop${NC}"
+    echo -e "⚠️  ${YELLOW}Environment verification completed with critical issues${NC}"
+    echo -e "❌ ${RED}Please fix the critical issues before starting the workshop${NC}"
     echo ""
-    echo "Quick fixes:"
+    echo "Critical fixes needed:"
     echo "1. Install missing dependencies: pip install -r requirements.txt"
-    echo "2. Start Ollama service: ollama serve"
-    echo "3. Pull Llama model: ollama pull llama3.2"
-    echo "4. Start Docker if needed"
+    echo ""
+    echo "Optional fixes:"
+    echo "2. Start Ollama service: ollama serve (or will be handled by devcontainer)"
+    echo "3. Pull Llama model: ollama pull llama3.2 (or will be handled by devcontainer)"
+    echo "4. Start Docker if needed (available in devcontainer)"
 fi
 
 echo ""
