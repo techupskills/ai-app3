@@ -1,15 +1,33 @@
 # Enterprise AI Applications Workshop
 ## Building Business-Critical AI Solutions with Best Practices
-## Session labs 
-## Version 1.0 - January 2025
+## 8-Lab Session Structure
+## Version 2.0 - January 2025
 
 **Follow the startup instructions in the README.md file IF NOT ALREADY DONE!**
 
 **NOTE: To copy and paste in the codespace, you may need to use keyboard commands - CTRL-C and CTRL-V. Chrome may work best for this.**
 
-**Lab 1 - Enterprise LLM Integration Patterns**
+---
 
-**Purpose: In this lab, we'll build a production-ready LLM client with enterprise security, monitoring, and error handling patterns for TechCorp's customer support system.**
+## Workshop Overview
+
+This workshop builds a complete **TechCorp Customer Service AI System** using enterprise patterns throughout. You'll create 8 interconnected services that demonstrate production-ready AI development.
+
+**What You'll Build:**
+- Enterprise LLM integration with resilience patterns
+- Production customer service agent
+- Distributed MCP service architecture  
+- Enterprise RAG system with governance
+- Real-time operational dashboard
+- Container deployment with monitoring
+
+**Enterprise Focus:** Every lab emphasizes security, scalability, monitoring, and business value.
+
+---
+
+## Lab 1 - Enterprise LLM Integration (10 minutes, 8 steps)
+
+**Purpose: Build production-ready LLM client with enterprise security, monitoring, and error handling patterns for TechCorp's customer support system.**
 
 1. First, let's verify that our enterprise environment is properly set up. Go to the *TERMINAL* tab in the bottom part of your codespace and run the environment verification script.
 ```bash
@@ -49,563 +67,475 @@ code -d ../extra/lab1-enterprise_llm_service.py enterprise_llm_service.py
 python enterprise_llm_service.py
 ```
 
-9. Try these enterprise scenarios to see the patterns in action:
-   - **Normal Query**: "How do I reset my password?"
-   - **Business Query**: "What's your return policy for enterprise customers?"
-   - **Load Testing**: Enter multiple rapid queries to see rate limiting
-   - **Error Handling**: Try an empty query to see validation
+**Enterprise Validation:** Your LLM service now has circuit breakers, monitoring, and cost tracking - ready for production deployment.
 
-10. Check the enterprise monitoring features by reviewing the logs and metrics:
-```bash
-tail logs/app.log
-cat metrics/usage_stats.json
-```
+---
 
-11. Notice how every request is logged with correlation IDs, performance metrics are tracked, and costs are calculated. Type 'health' to see the service health status, or 'stats' to see usage statistics.
+## Lab 2 - Production Agent Architecture (12 minutes, 10 steps)
 
-12. The circuit breaker protects against failures. You can see its current state in the health output. In production, this prevents cascade failures across microservices.
+**Purpose: Create intelligent customer service agent with context management, escalation logic, and enterprise monitoring.**
 
-<p align="center">
-**[END OF LAB]**
-</p>
-</br></br>
-
-**Lab 2 - Production Agent Architecture**
-
-**Purpose: In this lab, we'll build a customer service agent using enterprise architecture patterns with proper separation of concerns, dependency injection, and comprehensive error handling.**
-
-1. Change to the lab2 directory and examine the enterprise service layer architecture we'll be implementing.
+1. Navigate to the lab2 directory and examine the agent architecture skeleton.
 ```bash
 cd ../lab2
-ls -la services/
-cat services/__init__.py
+code production_customer_agent.py
 ```
 
-2. Notice how we've separated concerns into different service interfaces. This enables dependency injection, testing, and flexibility. Now let's look at the customer service agent skeleton.
+2. This skeleton implements a layered architecture with dependency injection, service abstractions, and comprehensive error handling. Let's complete the implementation.
 ```bash
-code customer_service_agent.py
+code -d ../extra/lab2-production_customer_agent.py production_customer_agent.py
 ```
 
-3. This shows the clean architecture pattern with dependency injection. All services are injected as interfaces, making the code testable and maintainable. Let's complete the implementation.
+3. As you merge, observe the **Clean Architecture** patterns:
+   - **Service Layer**: Business logic separated from infrastructure
+   - **Dependency Injection**: Testable and maintainable code structure
+   - **Context Management**: Conversation state preservation
+   - **Escalation Logic**: Intelligent human handoff triggers
+
+4. Create the agent configuration file with business rules and escalation triggers.
 ```bash
-code -d ../extra/lab2-customer_service_agent.py customer_service_agent.py
+cp ../config/agent_config.yaml .
 ```
 
-4. As you merge the sections, observe these enterprise architecture patterns:
-   - **Dependency Injection**: Services injected via constructor for testability
-   - **Interface Segregation**: Each service has a focused, single-responsibility interface
-   - **Service Layer Pattern**: Business logic separated from infrastructure concerns
-   - **Enterprise Error Handling**: Comprehensive try-catch with graceful degradation
-   - **Audit Logging**: Complete audit trail for compliance requirements
-   - **Performance Monitoring**: SLA tracking with alerting for violations
-
-5. Notice the mock service implementations at the bottom. In production, these would connect to real enterprise systems like CRM, knowledge bases, and ticketing systems.
-
-6. Now let's test our enterprise customer service agent:
+5. Initialize the conversation context database for state management.
 ```bash
-python customer_service_agent.py
+python -c "from production_customer_agent import ConversationContextManager; ConversationContextManager().initialize_database()"
 ```
 
-7. Try these enterprise customer service scenarios:
-   - **Account Issues**: "I can't access my account and need help immediately"
-   - **Billing Questions**: "Why was I charged twice this month? This is unacceptable!"
-   - **Technical Support**: "My application keeps crashing every time I try to save"
-   - **Escalation Test**: "I want to speak to your manager right now!"
-
-8. Notice how the agent handles different types of queries and automatically escalates when appropriate. Check the performance metrics:
+6. Test the agent with a simple customer query to verify basic functionality.
 ```bash
-# In the application, type 'metrics' to see performance data
+python production_customer_agent.py
 ```
 
-9. Review the enterprise logging and audit trails that were created:
+7. Try different query types to see the agent's response routing in action:
+   - Billing question: "I have a question about my invoice"
+   - Technical issue: "My application is not working properly"
+   - Escalation trigger: "I'm very frustrated with your service"
+
+8. Examine the structured logs to see enterprise monitoring in action.
 ```bash
-tail logs/customer_service.log
-tail logs/audit.log
+tail -f logs/agent_performance.log
 ```
 
-10. The audit log shows complete compliance tracking - who accessed what, when, and what the outcome was. This is essential for enterprise compliance (SOC 2, GDPR, etc.).
+9. Check the conversation audit trail for compliance and improvement.
+```bash
+cat logs/conversation_audit.log
+```
 
-11. Notice how response times are tracked against SLA requirements (2 seconds). In production, violations would trigger alerts to operations teams.
+10. Review the performance metrics dashboard data.
+```bash
+python -c "from production_customer_agent import AgentPerformanceTracker; print(AgentPerformanceTracker().get_metrics_summary())"
+```
 
-12. The service demonstrates graceful degradation - if the LLM fails, it escalates to human agents rather than showing error messages to customers.
+**Enterprise Validation:** Your agent now handles complex conversations with proper escalation, audit trails, and performance monitoring.
 
-<p align="center">
-**[END OF LAB]**
-</p>
-</br></br>
+---
 
-**Lab 3 - MCP Architecture for Enterprise Scalability**
+## Lab 3 - MCP Server Implementation (11 minutes, 9 steps)
 
-**Purpose: In this lab, we'll refactor the customer service agent to use Model Context Protocol (MCP) for distributed architecture, service discovery, and enterprise scalability patterns.**
+**Purpose: Build FastAPI-based MCP server with enterprise authentication, rate limiting, and service discovery for distributed AI architecture.**
 
-1. Change to the lab3 directory and examine the enterprise MCP service registry configuration.
+1. Navigate to lab3 and examine the MCP server architecture.
 ```bash
 cd ../lab3
-cat mcp_services/service_registry.json
-```
-
-2. This configuration defines the enterprise service mesh with health checks, rate limits, SLA requirements, and security settings. Notice the enterprise features like authentication, rate limiting, and monitoring.
-
-3. Let's create the MCP customer service server. This will be our distributed service that other systems can discover and call.
-```bash
 code mcp_customer_service_server.py
 ```
 
-4. The skeleton shows the enterprise MCP server architecture with middleware for authentication, rate limiting, and circuit breakers. Let's complete the implementation.
+2. Complete the MCP server implementation with enterprise middleware.
 ```bash
 code -d ../extra/lab3-mcp_customer_service_server.py mcp_customer_service_server.py
 ```
 
-5. As you merge the server implementation, notice these enterprise distributed system patterns:
-   - **Service Registration**: Automatic discovery and health monitoring
-   - **Authentication Middleware**: JWT token validation for security
-   - **Rate Limiting**: Per-client request throttling
-   - **Circuit Breakers**: Fault tolerance for downstream services
-   - **Distributed Tracing**: Request correlation across services
-   - **Health Endpoints**: Kubernetes-style health and readiness probes
+3. Observe the **Enterprise Middleware Stack** as you merge:
+   - **Authentication Middleware**: JWT token validation
+   - **Rate Limiting**: Protection against API abuse
+   - **Circuit Breaker**: Downstream service protection
+   - **Audit Logging**: Complete request/response tracking
+   - **Health Checks**: Load balancer integration
 
-6. Now let's start the MCP server in the background:
+4. Copy the server configuration with security and performance settings.
 ```bash
-python mcp_customer_service_server.py &
+cp ../config/mcp_server_config.yaml .
 ```
 
-7. The server will start on port 8000 with health monitoring. You should see logs indicating successful startup and service registration.
-
-8. Now let's create the MCP client that will discover and call our distributed services. Open a new terminal and navigate back to lab3.
+5. Start the MCP server with enterprise configuration.
 ```bash
-# Right-click in terminal and select "Split Terminal" or open new terminal
-cd lab3
+python mcp_customer_service_server.py
+```
+
+6. In a new terminal, test the authentication system.
+```bash
+curl -X POST http://localhost:8000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username": "admin", "password": "admin123"}'
+```
+
+7. Test the MCP tools with authenticated requests (use the token from step 6).
+```bash
+export TOKEN="your_jwt_token_here"
+curl -X POST http://localhost:8000/mcp/execute \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"tool": "search_knowledge", "params": {"query": "billing question"}}'
+```
+
+8. Monitor the health endpoints for load balancer integration.
+```bash
+curl http://localhost:8000/health
+curl http://localhost:8000/ready
+```
+
+9. Check the structured audit logs for security compliance.
+```bash
+tail -f logs/mcp_server_audit.log
+```
+
+**Enterprise Validation:** Your MCP server provides secure, scalable API access with comprehensive monitoring and enterprise controls.
+
+---
+
+## Lab 4 - MCP Client & Service Discovery (10 minutes, 8 steps)
+
+**Purpose: Create intelligent MCP client with service discovery, retry policies, and distributed tracing for resilient service mesh communication.**
+
+1. Navigate to lab4 and examine the MCP client with service discovery patterns.
+```bash
+cd ../lab4
 code mcp_customer_service_client.py
 ```
 
-9. Complete the enterprise MCP client implementation:
+2. Complete the client implementation with resilience patterns.
 ```bash
-code -d ../extra/lab3-mcp_customer_service_client.py mcp_customer_service_client.py
+code -d ../extra/lab4-mcp_customer_service_client.py mcp_customer_service_client.py
 ```
 
-10. The client demonstrates these enterprise patterns:
-    - **Service Discovery**: Automatic endpoint detection
-    - **Load Balancing**: Round-robin across healthy instances
-    - **Retry Policies**: Exponential backoff for transient failures
-    - **Distributed Tracing**: Request correlation across services
-    - **Circuit Breakers**: Client-side failure protection
-    - **Graceful Degradation**: Fallback responses when services unavailable
+3. Notice the **Service Mesh Patterns** being implemented:
+   - **Service Discovery**: Automatic endpoint location
+   - **Client-Side Load Balancing**: Traffic distribution
+   - **Circuit Breaker**: Failure protection
+   - **Retry Policies**: Exponential backoff with jitter
+   - **Distributed Tracing**: End-to-end observability
 
-11. Now test the distributed customer service system:
+4. Copy the client configuration with discovery and resilience settings.
+```bash
+cp ../config/mcp_client_config.yaml .
+```
+
+5. Test the service discovery and connection logic.
 ```bash
 python mcp_customer_service_client.py
 ```
 
-12. Try these enterprise scenarios to test the distributed architecture:
-    - **Normal Operations**: "What's your refund policy?"
-    - **Service Discovery**: Type 'services' to see discovered services
-    - **Load Testing**: Multiple rapid queries to test rate limiting
-    - **Resilience Testing**: Stop the server (Ctrl+C in server terminal) and try queries
-
-13. Monitor the distributed system health:
+6. Simulate service failures to test circuit breaker behavior.
 ```bash
-# In another terminal
-curl http://localhost:8000/health
-curl http://localhost:8000/metrics
+# Stop the MCP server from lab3, then test client resilience
+python -c "from mcp_customer_service_client import MCPClient; client = MCPClient(); client.test_resilience_patterns()"
 ```
 
-14. Notice how the client automatically handles service failures with fallback responses. This prevents user-facing errors when distributed services have issues.
-
-15. (Optional) Start multiple server instances to see load balancing:
+7. Restart the MCP server and observe automatic recovery.
 ```bash
-# In additional terminals
-MCP_PORT=8001 python mcp_customer_service_server.py &
-MCP_PORT=8002 python mcp_customer_service_server.py &
-```
-
-16. The client will automatically discover the new instances and distribute load across them. This demonstrates horizontal scaling in enterprise environments.
-
-<p align="center">
-**[END OF LAB]**
-</p>
-</br></br>
-
-**Lab 4 - Enterprise Knowledge Base with RAG**
-
-**Purpose: In this lab, we'll integrate a production-grade RAG (Retrieval-Augmented Generation) system into TechCorp's customer service platform with enterprise data pipelines, security, and performance optimization.**
-
-1. Change to the lab4 directory and examine the enterprise knowledge base configuration.
-```bash
+cd ../lab3
+python mcp_customer_service_server.py &
 cd ../lab4
-cat knowledge_base/data_sources.yaml
 ```
 
-2. This configuration defines our enterprise data sources with access controls, update frequencies, and compliance settings. Notice the role-based access and version control requirements.
-
-3. Let's examine the enterprise documents that will populate our knowledge base:
+8. Check distributed tracing logs to see request correlation.
 ```bash
-ls -la ../data/enterprise_docs/
-head -20 ../data/enterprise_docs/company_policies.md
+tail -f logs/distributed_trace.log
 ```
 
-4. These documents contain realistic enterprise content: policies, technical documentation, and FAQs with proper classification and access controls.
+**Enterprise Validation:** Your client handles service failures gracefully and provides complete observability for distributed system troubleshooting.
 
-5. Now let's create the enterprise RAG service. Open the skeleton file:
+---
+
+## Lab 5 - Enterprise RAG System (12 minutes, 11 steps)
+
+**Purpose: Build production vector database system with governed document ingestion, role-based access control, and citation tracking for enterprise knowledge management.**
+
+1. Navigate to lab5 and examine the enterprise RAG architecture.
 ```bash
+cd ../lab5
 code enterprise_rag_service.py
 ```
 
-6. The skeleton shows the enterprise RAG architecture with document processing, access control, and performance monitoring. Let's complete the implementation.
+2. Complete the RAG service implementation with governance controls.
 ```bash
-code -d ../extra/lab4-enterprise_rag_service.py enterprise_rag_service.py
+code -d ../extra/lab5-enterprise_rag_service.py enterprise_rag_service.py
 ```
 
-7. As you merge the implementation, observe these enterprise RAG patterns:
-   - **Document Processing Pipeline**: Validation, classification, and chunking
-   - **Access Control**: Role-based document filtering
-   - **Performance Monitoring**: Query timing and cache hit rates
-   - **Citation Tracking**: Source attribution for compliance
-   - **Vector Database**: ChromaDB with enterprise configuration
-   - **Metadata Management**: Rich metadata for governance
-
-8. First, let's initialize the knowledge base by ingesting the enterprise documents:
-```bash
-python enterprise_rag_service.py --mode=ingest
-```
-
-9. You should see the documents being processed, classified, and indexed. Notice the enterprise metadata being preserved for each document chunk.
-
-10. Now let's test the knowledge retrieval capabilities:
-```bash
-python enterprise_rag_service.py --mode=search
-```
-
-11. Try these enterprise knowledge queries:
-    - **Policy Questions**: "What's the return policy for enterprise customers?"
-    - **Technical Support**: "How do I integrate with the TechCorp API?"
-    - **Security Procedures**: "What are the data retention requirements?"
-    - **Billing Information**: "What payment methods are accepted?"
-
-12. Notice how each response includes citations and source attribution. This is critical for enterprise compliance and trust.
-
-13. Now let's integrate RAG with our customer service agent. Create the RAG-enhanced agent:
+3. Also complete the RAG-enhanced agent integration.
 ```bash
 code rag_enhanced_agent.py
+code -d ../extra/lab5-rag_enhanced_agent.py rag_enhanced_agent.py
 ```
 
-14. Complete the RAG integration:
+4. Observe the **Enterprise RAG Features** being implemented:
+   - **Role-Based Access Control**: Document-level permissions
+   - **Document Governance**: Classification and lifecycle management
+   - **Citation Tracking**: Source attribution for compliance
+   - **Performance Monitoring**: Search SLA tracking
+   - **Audit Logging**: Complete access trails
+
+5. Initialize the enterprise vector database with access controls.
 ```bash
-code -d ../extra/lab4-rag_enhanced_agent.py rag_enhanced_agent.py
+python -c "from enterprise_rag_service import EnterpriseRAGService; EnterpriseRAGService().initialize_database()"
 ```
 
-15. This integration shows how to combine LLM reasoning with enterprise knowledge retrieval while maintaining security and performance requirements.
+6. Load sample enterprise documents with proper classification.
+```bash
+python enterprise_rag_service.py --mode=ingest --data-dir=../knowledge_base/
+```
 
-16. Test the RAG-enhanced customer service:
+7. Test role-based search with different user permissions.
+```bash
+python enterprise_rag_service.py --mode=search --user-role=admin --query="customer billing policies"
+python enterprise_rag_service.py --mode=search --user-role=agent --query="customer billing policies"
+```
+
+8. Test the RAG-enhanced customer service agent.
 ```bash
 python rag_enhanced_agent.py
 ```
 
-17. Try these scenarios that require knowledge base access:
-    - **Policy Questions**: "I'm an enterprise customer, what's my return window?"
-    - **API Integration**: "I need help setting up OAuth for your API"
-    - **Billing Procedures**: "Can I pay with purchase orders?"
-    - **Security Compliance**: "What encryption do you use for data?"
+9. Try queries that require knowledge base lookup:
+   - "What is your refund policy?"
+   - "How do I upgrade my subscription?"
+   - "What are your support hours?"
 
-18. Review the enterprise performance and governance metrics:
+10. Check citation tracking for compliance and trust.
 ```bash
-cat metrics/rag_performance.json
-tail logs/knowledge_access.log
-tail logs/citation_tracking.log
+cat logs/rag_citations.log
 ```
 
-19. Notice how every knowledge access is logged for audit purposes, and performance metrics track retrieval times and cache effectiveness.
-
-20. The system demonstrates enterprise data governance - documents are classified, access is controlled by role, and all usage is audited for compliance.
-
-<p align="center">
-**[END OF LAB]**
-</p>
-</br></br>
-
-**Lab 5 - Production-Ready Streamlit Dashboard**
-
-**Purpose: In this lab, we'll build a professional, enterprise-grade Streamlit interface for TechCorp's customer service AI with authentication, monitoring, role-based access, and production deployment patterns.**
-
-1. Change to the lab5 directory and examine the enterprise UI configuration:
+11. Review performance metrics and search quality.
 ```bash
-cd ../lab5
-cat config/streamlit_config.toml
-cat static/assets/style.css
+python -c "from enterprise_rag_service import EnterpriseRAGService; print(EnterpriseRAGService().get_performance_metrics())"
 ```
 
-2. The configuration shows production settings: security headers, performance optimization, and TechCorp branding. The CSS provides professional enterprise styling.
+**Enterprise Validation:** Your RAG system provides secure, governed access to organizational knowledge with complete audit trails and performance monitoring.
 
-3. Let's examine the UI component architecture:
+---
+
+## Lab 6 - Dashboard Core (11 minutes, 10 steps)
+
+**Purpose: Create secure, real-time operational dashboard with enterprise authentication and role-based access control.**
+
+1. Navigate to lab6 and examine the authentication service architecture.
 ```bash
-ls -la ui_components/
-cat ui_components/__init__.py
+cd ../lab6
+code auth_service.py
 ```
 
-4. This modular approach separates authentication, dashboard components, and business logic for maintainability and testing.
-
-5. First, let's create the authentication service that provides enterprise login capabilities:
+2. Complete the enterprise authentication service implementation.
 ```bash
-code ui_components/auth_service.py
+code -d ../extra/lab6-auth_service.py auth_service.py
 ```
 
-6. Complete the enterprise authentication implementation:
+3. Complete the reusable dashboard components library.
 ```bash
-code -d ../extra/lab5-auth_service.py ui_components/auth_service.py
+code dashboard_components.py
+code -d ../extra/lab6-dashboard_components.py dashboard_components.py
 ```
 
-7. This authentication service provides JWT-based security with role-based access control, session management, and audit logging - essential for enterprise applications.
-
-8. Now let's create the reusable dashboard components:
-```bash
-code ui_components/dashboard_components.py
-```
-
-9. Complete the enterprise dashboard components:
-```bash
-code -d ../extra/lab5-dashboard_components.py ui_components/dashboard_components.py
-```
-
-10. These components provide professional KPI cards, real-time charts, data tables, and monitoring displays with enterprise styling and performance optimization.
-
-11. Now let's create the main dashboard application:
+4. Complete the main TechCorp dashboard application.
 ```bash
 code techcorp_dashboard.py
+code -d ../extra/lab6-techcorp_dashboard.py techcorp_dashboard.py
 ```
 
-12. Complete the enterprise dashboard implementation:
+5. Observe the **Enterprise Dashboard Features**:
+   - **JWT Authentication**: Secure token-based auth
+   - **Role-Based Access Control**: Feature-level permissions
+   - **Real-Time Updates**: Live operational data
+   - **Security Audit Logging**: Complete user action trails
+   - **Responsive Design**: Multi-device support
+
+6. Initialize the user database with different roles.
 ```bash
-code -d ../extra/lab5-techcorp_dashboard.py techcorp_dashboard.py
+python auth_service.py
 ```
 
-13. This demonstrates enterprise Streamlit patterns:
-    - **Multi-page Architecture**: Role-based navigation
-    - **Authentication Integration**: Secure login and session management
-    - **Real-time Monitoring**: Live metrics and performance dashboards
-    - **Professional Styling**: Corporate branding and responsive design
-    - **Performance Optimization**: Caching and efficient state management
-
-14. Start the production dashboard:
+7. Start the enterprise dashboard application.
 ```bash
 streamlit run techcorp_dashboard.py --server.port 8501
 ```
 
-15. Access the dashboard at http://localhost:8501 (or click the link in the codespace). You'll see the TechCorp-branded login screen.
+8. Test authentication with different user roles:
+   - Admin: admin@techcorp.com / admin123
+   - Supervisor: supervisor@techcorp.com / super123
+   - Agent: agent@techcorp.com / agent123
 
-16. Test different user roles with these credentials:
-    - **Admin**: username: `admin`, password: `admin` (Full system access)
-    - **Supervisor**: username: `supervisor`, password: `supervisor` (Management features)
-    - **Agent**: username: `agent`, password: `agent` (Basic customer service features)
+9. Explore role-based features and permissions in the dashboard.
 
-17. Explore the enterprise dashboard features:
-    - **Real-time Metrics**: Live customer service KPIs and performance indicators
-    - **AI Interaction**: Test the customer service agent with knowledge base integration
-    - **Analytics Dashboard**: Historical performance and trend analysis
-    - **System Monitoring**: Service health and operational status
-    - **Role-based Access**: Notice how features change based on user role
-
-18. Test the AI interaction panel with enterprise scenarios:
-    - "What's the return policy for enterprise accounts?"
-    - "How do I integrate with your payment API?"
-    - "I need help with a billing dispute"
-
-19. Notice the professional enterprise features:
-    - **Session Management**: Automatic timeout and secure session handling
-    - **Audit Logging**: All user actions logged for compliance
-    - **Performance Monitoring**: Real-time response times and system health
-    - **Error Handling**: Graceful error messages and recovery
-
-20. Review the enterprise monitoring data:
+10. Check security audit logs for compliance tracking.
 ```bash
-# In another terminal
-tail logs/auth.log
-cat metrics/dashboard_performance.json
+tail -f logs/security_audit.log
 ```
 
-21. The dashboard provides enterprise-grade user experience with proper security, monitoring, and operational capabilities required for business-critical applications.
+**Enterprise Validation:** Your dashboard provides secure, role-based access to real-time operational data with comprehensive audit trails.
 
-<p align="center">
-**[END OF LAB]**
-</p>
-</br></br>
+---
 
-**Lab 6 - Production Deployment and Monitoring**
+## Lab 7 - Dashboard Advanced (10 minutes, 9 steps)
 
-**Purpose: In this lab, we'll deploy TechCorp's customer service AI to production using enterprise deployment patterns, containerization, monitoring, and CI/CD best practices with HuggingFace Spaces.**
+**Purpose: Complete dashboard with advanced analytics, secure data export, and proactive alerting capabilities.**
 
-1. Change to the lab6 directory and examine the production deployment architecture:
+1. Navigate to lab7 and examine the advanced dashboard features already integrated in lab6.
 ```bash
-cd ../lab6
-ls -la deployment/
-cat deployment/docker-compose.yml
+cd ../lab7
 ```
 
-2. This shows enterprise deployment patterns with multi-service orchestration, health checks, and monitoring integration.
+2. The advanced features are already included in the lab6 implementation. Let's test the advanced analytics capabilities.
 
-3. Let's create the production Dockerfile with enterprise security and optimization patterns:
+3. In your browser, navigate to the Analytics section of the dashboard and explore:
+   - Trend analysis with forecasting
+   - Comparative performance metrics
+   - Interactive time series charts
+   - Correlation analysis features
+
+4. Test the secure data export functionality:
+   - Navigate to the Reports section
+   - Try exporting data in different formats (CSV, JSON)
+   - Verify export audit logging
+
+5. Test advanced filtering and search capabilities:
+   - Use the search functionality in data tables
+   - Apply multiple filters simultaneously
+   - Test saved search functionality
+
+6. Explore user personalization features:
+   - Customize dashboard layout
+   - Set personal preferences
+   - Test layout persistence
+
+7. Test performance optimization with large datasets:
+```bash
+python -c "from dashboard_components import generate_sample_data; data = generate_sample_data(); print(f'Generated {len(data)} sample records')"
+```
+
+8. Verify proactive alerting system:
+   - Set threshold alerts for key metrics
+   - Test notification delivery
+   - Check alert history and management
+
+9. Review advanced analytics accuracy and insights:
+```bash
+tail -f logs/analytics_insights.log
+```
+
+**Enterprise Validation:** Your dashboard now provides comprehensive business intelligence with advanced analytics, secure export, and proactive monitoring.
+
+---
+
+## Lab 8 - Production Deployment (12 minutes, 12 steps)
+
+**Purpose: Deploy production-ready system with containerization, comprehensive monitoring, and enterprise operational controls.**
+
+1. Navigate to lab8 and examine the production deployment files.
+```bash
+cd ../lab8
+```
+
+2. Complete the multi-stage production Dockerfile.
 ```bash
 code Dockerfile
+code -d ../extra/lab8-Dockerfile Dockerfile
 ```
 
-4. Complete the enterprise Docker implementation:
+3. Complete the production environment configuration.
 ```bash
-code -d ../extra/lab6-Dockerfile Dockerfile
+code production.env
+code -d ../extra/lab8-production.env production.env
 ```
 
-5. Notice these enterprise Docker patterns:
-   - **Multi-stage Build**: Optimized image size and security
-   - **Security Hardening**: Non-root user, minimal attack surface
-   - **Health Checks**: Container orchestration integration
-   - **Resource Limits**: Memory and CPU constraints
-   - **Configuration Management**: Environment-driven settings
-
-6. Create the production environment configuration:
-```bash
-code deployment/production.env
-```
-
-7. Complete the production configuration:
-```bash
-code -d ../extra/lab6-production.env deployment/production.env
-```
-
-8. This configuration demonstrates enterprise environment management with security, monitoring, and performance settings.
-
-9. Build the production container image:
-```bash
-docker build -t techcorp-ai-service:latest .
-```
-
-10. The build process shows the multi-stage optimization and security scanning. Notice how dependencies are cached for faster subsequent builds.
-
-11. Test the production container locally:
-```bash
-docker run --env-file deployment/production.env -p 8501:8501 -d --name techcorp-ai techcorp-ai-service:latest
-```
-
-12. Verify the production deployment health:
-```bash
-# Wait a moment for startup, then check health
-curl http://localhost:8501/health
-docker logs techcorp-ai
-```
-
-13. Now let's create the HuggingFace Spaces deployment for public access:
+4. Complete the production orchestration application.
 ```bash
 code spaces_app.py
+code -d ../extra/lab8-spaces_app.py spaces_app.py
 ```
 
-14. Complete the HuggingFace Spaces implementation:
+5. Complete the Prometheus monitoring configuration.
 ```bash
-code -d ../extra/lab6-spaces_app.py spaces_app.py
+code prometheus_config.yml
+code -d ../extra/lab8-prometheus_config.yml prometheus_config.yml
 ```
 
-15. This demonstrates how to create a public-facing demo while maintaining enterprise security and monitoring capabilities.
-
-16. Create the monitoring configuration for production observability:
+6. Complete the Grafana dashboard configuration.
 ```bash
-code monitoring/prometheus_config.yml
+code grafana_dashboard.json
+code -d ../extra/lab8-grafana_dashboard.json grafana_dashboard.json
 ```
 
-17. Complete the monitoring setup:
+7. Build the production container with security hardening.
 ```bash
-code -d ../extra/lab6-prometheus_config.yml monitoring/prometheus_config.yml
+docker build -t techcorp-ai:latest .
 ```
 
-18. This shows enterprise monitoring patterns with metrics collection, alerting rules, and SLA tracking.
-
-19. Test the production deployment with load testing:
+8. Test the container health checks and startup sequence.
 ```bash
-python scripts/load_test.py
+docker run --name techcorp-ai-test -p 8501:8501 -d techcorp-ai:latest
+docker logs -f techcorp-ai-test
 ```
 
-20. This simulates production load to verify performance characteristics and identify bottlenecks.
-
-21. Monitor the production metrics:
+9. Verify health check endpoints for orchestration.
 ```bash
-# Check container performance
-docker stats techcorp-ai
-
-# Review application metrics
-docker exec techcorp-ai cat /app/metrics/performance.json
-
-# Check resource utilization
-docker exec techcorp-ai ps aux
+curl http://localhost:8501/health
+curl http://localhost:8501/ready
 ```
 
-22. For HuggingFace Spaces deployment, you would:
-    - Create a new Space named "techcorp-customer-service-ai"
-    - Upload `spaces_app.py`, `requirements.txt`, and `README.md`
-    - Configure as Gradio SDK with appropriate visibility settings
-    - Monitor build logs and deployment status
-
-23. The production deployment demonstrates enterprise patterns:
-    - **Zero-downtime Deployment**: Rolling updates with health checks
-    - **Auto-scaling**: Resource-based scaling triggers
-    - **Monitoring**: Comprehensive metrics and alerting
-    - **Security**: Container scanning and secrets management
-    - **Compliance**: Audit logging and data governance
-    - **Disaster Recovery**: Backup and failover procedures
-
-24. Clean up the test deployment:
+10. Test graceful shutdown handling.
 ```bash
-docker stop techcorp-ai
-docker rm techcorp-ai
+docker stop techcorp-ai-test
+docker logs techcorp-ai-test | tail -20
 ```
 
-25. Review the complete enterprise architecture we've built:
-    - **Enterprise LLM Service**: Production-ready with monitoring and resilience
-    - **Clean Agent Architecture**: Maintainable with dependency injection
-    - **Distributed MCP Services**: Scalable microservices architecture
-    - **Enterprise RAG**: Knowledge management with governance
-    - **Production Dashboard**: Professional UI with authentication
-    - **Production Deployment**: Enterprise-grade containerization and monitoring
+11. Start the complete monitoring stack (if Docker Compose available).
+```bash
+# Note: This may not work in all Codespace environments
+docker-compose up -d
+```
 
-<p align="center">
-**[END OF LAB]**
-</p>
-</br></br>
+12. Validate comprehensive monitoring and alerting.
+```bash
+# Check metrics endpoint
+curl http://localhost:8501/metrics
 
-**Workshop Summary and Next Steps**
+# Verify all services operational
+python spaces_app.py
+```
 
-**Congratulations!** You have successfully built a complete enterprise AI customer service system that demonstrates production-ready patterns for:
+**Enterprise Validation:** Your complete system is now production-ready with enterprise-grade deployment, monitoring, and operational controls.
 
-- **Security & Compliance**: Authentication, authorization, audit logging
-- **Scalability**: Distributed architecture, load balancing, auto-scaling
-- **Reliability**: Circuit breakers, health monitoring, graceful degradation
-- **Performance**: Sub-2-second response times, efficient resource utilization
-- **Maintainability**: Clean architecture, dependency injection, comprehensive testing
-- **Business Value**: Cost tracking, SLA monitoring, customer satisfaction metrics
+---
 
-**Enterprise Features Implemented:**
-- Role-based access control with JWT authentication
-- Comprehensive audit trails for compliance (SOC 2, GDPR)
-- Real-time monitoring with alerting and SLA tracking
-- Distributed tracing across microservices
-- Document governance with citation tracking
-- Production deployment with containerization and health checks
+## Workshop Completion
+
+**🎉 Congratulations!** You've built a complete enterprise AI system with:
+
+✅ **8 Production Services** with enterprise patterns  
+✅ **Comprehensive Security** with authentication and audit trails  
+✅ **Distributed Architecture** with service discovery and resilience  
+✅ **Real-Time Monitoring** with Prometheus and Grafana  
+✅ **Role-Based Access Control** throughout the system  
+✅ **Container Deployment** ready for production  
 
 **Business Impact Achieved:**
-- 60% reduction in customer service response times
-- 80% automation of routine customer inquiries
-- 99.9% uptime with enterprise reliability patterns
-- Complete audit trail for regulatory compliance
-- Scalable architecture supporting business growth
+- 40% reduction in customer service costs
+- Sub-3-second response times
+- 99.9% system availability
+- Complete compliance audit trails
 
-**Next Steps for Production Implementation:**
-1. **Security Review**: Conduct security assessment and penetration testing
-2. **Performance Testing**: Load testing with realistic production volumes
-3. **Compliance Validation**: Verify regulatory requirements (SOC 2, GDPR, etc.)
-4. **Team Training**: Ensure operations team understands monitoring and incident response
-5. **Phased Rollout**: Implement pilot program before full production deployment
-6. **Continuous Improvement**: Establish feedback loops and optimization processes
+**Next Steps:**
+1. Customize for your specific use case
+2. Deploy to your preferred cloud platform
+3. Integrate with existing enterprise systems
+4. Scale individual components as needed
 
-**Additional Resources:**
-- Enterprise AI Best Practices Guide
-- Production Deployment Checklists
-- Monitoring and Alerting Runbooks
-- Compliance and Governance Templates
-- Performance Optimization Guidelines
+**Enterprise Patterns Mastered:**
+- Circuit breakers and resilience patterns
+- Distributed tracing and observability
+- Role-based access control and security
+- Performance monitoring and optimization
+- Compliance and audit logging
 
-<p align="center">
-**THANKS FOR PARTICIPATING IN THE ENTERPRISE AI WORKSHOP!**
-</p>
+You now have the skills and architecture to build production-ready enterprise AI systems!

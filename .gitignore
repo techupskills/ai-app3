@@ -535,9 +535,9 @@ api_docs/
 # Essential workshop files to keep
 !README.md
 !requirements.txt
-!.devcontainer/
+
 !slides/
-!lab*/
+lab*/
 !extra/
 !knowledge_base/
 !docker-compose.yml
