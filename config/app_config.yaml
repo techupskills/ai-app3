@@ -1,41 +1,196 @@
-# TechCorp Customer Support AI - Enterprise Configuration
+# TechCorp Enterprise AI Workshop - Application Configuration
+# Enterprise-grade configuration with security, performance, and monitoring settings
 
+# Application Settings
+application:
+  name: "TechCorp Customer Service AI"
+  version: "1.0.0"
+  environment: "development"  # development, staging, production
+  debug: true
+  
 # LLM Service Configuration
-llm:
-  model: "llama3.2:3b"
+llm_service:
+  provider: "ollama"
   base_url: "http://localhost:11434"
+  model: "llama3.2"
   timeout: 30
   max_retries: 3
-  rate_limit_per_minute: 60
   
-# Circuit Breaker Settings
-circuit_breaker:
-  failure_threshold: 5
-  recovery_timeout: 60
-  expected_exception_types: ["RequestException", "Timeout"]
+  # Circuit Breaker Settings
+  circuit_breaker:
+    failure_threshold: 5
+    recovery_timeout: 60
+    half_open_max_calls: 3
+    
+  # Cost Management
+  cost_tracking:
+    enabled: true
+    budget_limit: 100.0  # USD per month
+    alert_threshold: 80.0  # Alert at 80% of budget
+    
+  # Performance Settings
+  performance:
+    max_tokens: 2048
+    temperature: 0.7
+    top_p: 0.9
+    response_time_sla: 3.0  # seconds
+
+# Security Configuration
+security:
+  # Authentication
+  jwt:
+    secret_key: "techcorp-workshop-secret-key-change-in-production"
+    algorithm: "HS256"
+    access_token_expire_minutes: 30
+    refresh_token_expire_hours: 24
+    
+  # Rate Limiting
+  rate_limiting:
+    enabled: true
+    requests_per_minute: 60
+    burst_limit: 10
+    
+  # Input Validation
+  input_validation:
+    max_query_length: 1000
+    allowed_characters: "alphanumeric_punctuation"
+    content_filtering: true
 
 # Logging Configuration
 logging:
-  level: "INFO"
-  format: "%(asctime)s - %(name)s - %(levelname)s - %(correlation_id)s - %(message)s"
-  file_path: "logs/app.log"
-  max_file_size: "10MB"
-  backup_count: 5
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  format: "json"  # json, text
+  
+  # Log Files
+  files:
+    application: "logs/application.log"
+    security: "logs/security_audit.log"
+    performance: "logs/performance.log"
+    errors: "logs/errors.log"
+    
+  # Log Rotation
+  rotation:
+    max_size: "10MB"
+    backup_count: 5
+    
+  # Structured Logging
+  structured:
+    correlation_id: true
+    request_id: true
+    user_context: true
 
-# Security Settings
-security:
-  input_max_length: 10000
-  allowed_content_types: ["text/plain"]
-  rate_limiting_enabled: true
-  
-# Business Settings
-business:
-  cost_per_1k_tokens: 0.002
-  daily_budget_limit: 100.0
-  usage_tracking_enabled: true
-  
-# Monitoring
+# Database Configuration
+database:
+  # Vector Database (ChromaDB)
+  vector_db:
+    type: "chromadb"
+    persist_directory: "data/chroma_db"
+    collection_name: "enterprise_knowledge"
+    
+  # Application Database (SQLite for workshop)
+  app_db:
+    type: "sqlite"
+    database: "data/techcorp.db"
+    
+  # Connection Pooling
+  pool:
+    min_connections: 1
+    max_connections: 10
+    connection_timeout: 30
+
+# Monitoring Configuration
 monitoring:
-  metrics_enabled: true
-  health_check_interval: 30
-  performance_tracking: true
+  # Metrics
+  metrics:
+    enabled: true
+    endpoint: "/metrics"
+    port: 9090
+    
+  # Health Checks
+  health_checks:
+    endpoint: "/health"
+    detailed_endpoint: "/health/detailed"
+    timeout: 5
+    
+  # Performance Monitoring
+  performance:
+    track_response_times: true
+    track_token_usage: true
+    track_error_rates: true
+    sla_monitoring: true
+
+# Business Rules Configuration
+business_rules:
+  # Customer Service Agent
+  agent:
+    max_conversation_turns: 20
+    escalation_triggers:
+      - "frustrated"
+      - "angry" 
+      - "complaint"
+      - "manager"
+      - "supervisor"
+    
+    response_categories:
+      - "billing"
+      - "technical"
+      - "account"
+      - "general"
+      
+    escalation_threshold:
+      sentiment_score: -0.5
+      conversation_length: 10
+      unresolved_turns: 3
+      
+  # Knowledge Base
+  knowledge_base:
+    max_search_results: 5
+    relevance_threshold: 0.7
+    citation_required: true
+    
+  # Performance SLAs
+  slas:
+    response_time: 3.0  # seconds
+    availability: 99.9  # percentage
+    accuracy: 85.0  # percentage
+
+# Integration Settings
+integrations:
+  # MCP Server
+  mcp_server:
+    host: "localhost"
+    port: 8000
+    timeout: 30
+    
+  # External APIs
+  external_apis:
+    timeout: 15
+    max_retries: 2
+    backoff_factor: 1.5
+
+# Development Settings
+development:
+  # Auto-reload
+  auto_reload: true
+  
+  # Debug Features
+  debug_endpoints: true
+  request_logging: true
+  
+  # Mock Services
+  mock_external_apis: false
+
+# Production Overrides (when environment: production)
+production:
+  debug: false
+  security:
+    jwt:
+      secret_key: "${JWT_SECRET_KEY}"  # Environment variable
+  logging:
+    level: "WARNING"
+    files:
+      application: "/var/log/techcorp/application.log"
+      security: "/var/log/techcorp/security_audit.log"
+  development:
+    auto_reload: false
+    debug_endpoints: false

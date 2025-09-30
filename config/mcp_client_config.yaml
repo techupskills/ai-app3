@@ -1,0 +1,58 @@
+# MCP Client Configuration
+# Service discovery and resilience settings
+
+client:
+  name: "TechCorp MCP Client"
+  version: "1.0.0"
+  
+# Service Discovery Configuration
+service_discovery:
+  enabled: true
+  registry_type: "static"  # static, consul, kubernetes
+  
+  # Static service endpoints (for workshop)
+  static_endpoints:
+    - url: "http://localhost:8000"
+      weight: 1
+      health_check: "/health"
+      
+  refresh_interval: 30  # seconds
+  
+# Load Balancing Configuration
+load_balancing:
+  algorithm: "round_robin"  # round_robin, weighted, least_connections
+  health_check_interval: 10
+  
+# Circuit Breaker Configuration
+circuit_breaker:
+  enabled: true
+  failure_threshold: 3
+  recovery_timeout: 30
+  half_open_max_calls: 2
+  
+# Retry Configuration
+retry:
+  enabled: true
+  max_attempts: 3
+  backoff_strategy: "exponential"  # linear, exponential
+  initial_delay: 1.0
+  max_delay: 10.0
+  jitter: true
+  
+# Timeout Configuration
+timeouts:
+  connection_timeout: 5.0
+  read_timeout: 30.0
+  total_timeout: 35.0
+  
+# Distributed Tracing
+tracing:
+  enabled: true
+  correlation_id_header: "X-Correlation-ID"
+  trace_sampling_rate: 1.0
+  
+# Performance Monitoring
+monitoring:
+  enabled: true
+  metrics_interval: 60
+  log_file: "logs/distributed_trace.log"

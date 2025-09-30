@@ -1,0 +1,63 @@
+# TechCorp Agent Configuration
+# Business rules and escalation logic for customer service agent
+
+agent:
+  name: "TechCorp Customer Service Agent"
+  version: "1.0.0"
+  
+  # Response Categories and Templates
+  response_categories:
+    billing:
+      keywords: ["bill", "invoice", "payment", "charge", "refund", "subscription"]
+      template: "I understand you have a billing question. Let me help you with that."
+      escalation_threshold: 3
+      
+    technical:
+      keywords: ["error", "bug", "broken", "not working", "crash", "slow"]
+      template: "I see you're experiencing a technical issue. Let me assist you."
+      escalation_threshold: 2
+      
+    account:
+      keywords: ["account", "login", "password", "access", "profile", "settings"]
+      template: "I can help you with your account-related questions."
+      escalation_threshold: 3
+      
+    general:
+      keywords: ["help", "question", "information", "how to", "support"]
+      template: "I'm here to help. What specific information do you need?"
+      escalation_threshold: 4
+  
+  # Escalation Triggers
+  escalation:
+    sentiment_triggers:
+      - "frustrated"
+      - "angry"
+      - "upset" 
+      - "complaint"
+      - "manager"
+      - "supervisor"
+      - "escalate"
+      
+    conversation_triggers:
+      max_turns: 10
+      unresolved_turns: 3
+      sentiment_threshold: -0.5
+      
+    immediate_escalation:
+      - "legal"
+      - "lawsuit"
+      - "lawyer"
+      - "discrimination"
+      - "harassment"
+  
+  # Performance Thresholds
+  performance:
+    response_time_target: 3.0  # seconds
+    resolution_rate_target: 85.0  # percentage
+    satisfaction_target: 4.0  # out of 5
+    
+  # Context Management
+  context:
+    max_conversation_turns: 20
+    context_retention_hours: 24
+    summarization_threshold: 10
