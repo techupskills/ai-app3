@@ -78,12 +78,12 @@ python enterprise_llm_service.py
 1. Navigate to the lab2 directory and examine the agent architecture skeleton.
 ```bash
 cd ../lab2
-code production_customer_agent.py
+code customer_service_agent.py
 ```
 
 2. This skeleton implements a layered architecture with dependency injection, service abstractions, and comprehensive error handling. Let's complete the implementation.
 ```bash
-code -d ../extra/lab2-production_customer_agent.py production_customer_agent.py
+code -d ../extra/lab2-customer_service_agent.py customer_service_agent.py
 ```
 
 3. As you merge, observe the **Clean Architecture** patterns:
@@ -323,18 +323,18 @@ python -c "from enterprise_rag_service import EnterpriseRAGService; print(Enterp
 1. Navigate to lab6 and examine the authentication service architecture.
 ```bash
 cd ../lab6
-code auth_service.py
+code ui_components/auth_service.py
 ```
 
 2. Complete the enterprise authentication service implementation.
 ```bash
-code -d ../extra/lab6-auth_service.py auth_service.py
+code -d ../extra/lab6-auth_service.py ui_components/auth_service.py
 ```
 
 3. Complete the reusable dashboard components library.
 ```bash
-code dashboard_components.py
-code -d ../extra/lab6-dashboard_components.py dashboard_components.py
+code ui_components/dashboard_components.py
+code -d ../extra/lab6-dashboard_components.py ui_components/dashboard_components.py
 ```
 
 4. Complete the main TechCorp dashboard application.
@@ -450,8 +450,8 @@ code -d ../extra/lab8-production.env production.env
 
 4. Complete the production orchestration application.
 ```bash
-code spaces_app.py
-code -d ../extra/lab8-spaces_app.py spaces_app.py
+code ../lab6/spaces_app.py
+code -d ../extra/lab8-spaces_app.py ../lab6/spaces_app.py
 ```
 
 5. Complete the Prometheus monitoring configuration.
