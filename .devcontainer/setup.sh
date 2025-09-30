@@ -15,14 +15,25 @@ fi
 echo "📁 Working in directory: $WORKSHOP_DIR"
 cd "$WORKSHOP_DIR"
 
+# Create and activate virtual environment
+echo "🐍 Creating Python virtual environment..."
+python3 -m venv venv
+source venv/bin/activate
+
 # Install Python dependencies
 echo "📦 Installing Python dependencies..."
-python3 -m pip install --upgrade pip
-python3 -m pip install -r requirements.txt
+pip install --upgrade pip
+pip install -r requirements.txt
 
 # Verify critical packages
 echo "🔍 Verifying critical packages..."
-python3 -c "import requests, fastapi, uvicorn, streamlit, pandas, numpy, plotly, pydantic, httpx, jwt, chromadb" && echo "✅ All critical packages installed successfully"
+python -c "import requests, fastapi, uvicorn, streamlit, pandas, numpy, plotly, pydantic, httpx, jwt, chromadb" && echo "✅ All critical packages installed successfully"
+
+# Make scripts executable
+chmod +x scripts/verify_environment.sh
+chmod +x setup_python_env.sh
+chmod +x activate_workshop.sh
+chmod +x install_dependencies.sh
 
 # Install and setup Ollama
 echo "🦙 Installing Ollama..."

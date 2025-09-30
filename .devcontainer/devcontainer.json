@@ -12,7 +12,8 @@
       "enableNonRootDocker": "true"
     }
   },
-  "postCreateCommand": "bash setup_python_env.sh",
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+  "postStartCommand": "echo 'source /workspaces/ai-app3/venv/bin/activate' >> ~/.bashrc",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -25,8 +26,15 @@
         "GitHub.copilot-chat"
       ],
       "settings": {
-        "python.defaultInterpreterPath": "/usr/local/bin/python",
-        "terminal.integrated.defaultProfile.linux": "bash"
+        "python.defaultInterpreterPath": "/workspaces/ai-app3/venv/bin/python",
+        "python.terminal.activateEnvironment": true,
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "terminal.integrated.profiles.linux": {
+          "bash": {
+            "path": "bash",
+            "args": ["-c", "source /workspaces/ai-app3/venv/bin/activate && exec bash"]
+          }
+        }
       }
     }
   },
